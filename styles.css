@@ -1,0 +1,1095 @@
+/*
+  ╔══════════════════════════════════════════════════════════╗
+  ║         LAYER 2 — CSS  (The Styling / Appearance)        ║
+  ║  This file controls ALL visual design:                    ║
+  ║  colours, fonts, spacing, layout, animations, hover.     ║
+  ╚══════════════════════════════════════════════════════════╝
+
+  FILE STRUCTURE:
+  ───────────────
+  1.  CSS Variables (colour palette)
+  2.  Reset & Base styles
+  3.  Animation classes (scroll reveal)
+  4.  Navigation bar
+  5.  Hero section
+  6.  Shared section styles
+  7.  Crisis section
+  8.  Solution section
+  9.  Bio-Cementation section
+  10. Bio-Sensing section
+  11. Impact section
+  12. References section
+  13. Footer
+  14. Responsive (mobile) styles
+*/
+
+
+/* ═══════════════════════════════════════════════════
+   1. CSS VARIABLES
+   Define the colour palette and reuse throughout.
+   Change one value here = updates everywhere.
+   :root means "apply to the whole document"
+═══════════════════════════════════════════════════ */
+:root {
+  --ocean-deep:   #0a3d5c;   /* darkest blue — nav, headings */
+  --ocean-mid:    #1a6e8e;   /* mid blue — section titles */
+  --ocean-light:  #4fb3d4;   /* light blue — accents, buttons */
+  --accent-gold:  #ffd54f;   /* yellow-gold — hero highlight, labels */
+  --accent-orange:#f57c00;   /* orange — impact highlight border */
+  --white:        #ffffff;
+  --off-white:    #f5f9fc;   /* page background */
+  --text-dark:    #1a2530;   /* main body text */
+  --text-mid:     #3a5068;   /* secondary text */
+}
+
+
+/* ═══════════════════════════════════════════════════
+   2. RESET & BASE STYLES
+   Browsers have default styles that vary. We reset
+   them so everything starts from zero.
+═══════════════════════════════════════════════════ */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;  /* padding doesn't add to element width */
+}
+
+html {
+  scroll-behavior: smooth; /* smooth scrolling for nav anchor links */
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text-dark);
+  background: var(--off-white);
+  overflow-x: hidden; /* prevent horizontal scroll */
+}
+
+
+/* ═══════════════════════════════════════════════════
+   3. SCROLL REVEAL ANIMATION CLASSES
+   Elements start invisible. JavaScript adds .visible
+   when they scroll into view. CSS transitions do the rest.
+
+   HOW IT WORKS:
+   - Element starts: opacity 0 (invisible) + offset position
+   - JS adds class .visible when element enters viewport
+   - CSS transition smoothly animates to final state
+═══════════════════════════════════════════════════ */
+
+/* Fade upward */
+.anim-fade-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.anim-fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Scale in with spring bounce */
+.anim-scale-in {
+  opacity: 0;
+  transform: scale(0.88);
+  /* cubic-bezier creates the springy bounce effect */
+  transition: opacity 0.6s ease,
+              transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.anim-scale-in.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Slide in from left */
+.anim-slide-left {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.anim-slide-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Slide in from right */
+.anim-slide-right {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.anim-slide-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* 3D flip on Y axis */
+.anim-flip {
+  opacity: 0;
+  transform: perspective(600px) rotateY(40deg);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.anim-flip.visible {
+  opacity: 1;
+  transform: perspective(600px) rotateY(0deg);
+}
+
+/* Rotate + scale */
+.anim-rotate-in {
+  opacity: 0;
+  transform: rotate(-8deg) scale(0.9);
+  transition: opacity 0.6s ease,
+              transform 0.6s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+.anim-rotate-in.visible {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* Blur in */
+.anim-blur-in {
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(20px);
+  transition: opacity 0.8s ease, filter 0.8s ease, transform 0.8s ease;
+}
+.anim-blur-in.visible {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+}
+
+/* Stagger delay helpers — add these alongside animation classes */
+/* e.g. class="anim-scale-in d2" delays by 0.22s */
+.d1 { transition-delay: 0.10s !important; }
+.d2 { transition-delay: 0.22s !important; }
+.d3 { transition-delay: 0.34s !important; }
+.d4 { transition-delay: 0.46s !important; }
+.d5 { transition-delay: 0.58s !important; }
+.d6 { transition-delay: 0.70s !important; }
+.d7 { transition-delay: 0.82s !important; }
+
+
+/* ═══════════════════════════════════════════════════
+   4. NAVIGATION BAR
+   - position: fixed keeps it on screen while scrolling
+   - Starts transparent, gets dark background on scroll
+     (JavaScript adds .scrolled class)
+   - backdrop-filter: blur() creates the frosted glass effect
+═══════════════════════════════════════════════════ */
+nav {
+  position: fixed;      /* stays at top even when scrolling */
+  top: 0; left: 0; right: 0;
+  z-index: 100;         /* sits above everything else */
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(4, 42, 69, 0);          /* starts fully transparent */
+  transition: background 0.4s, backdrop-filter 0.4s, box-shadow 0.4s;
+}
+
+/* JavaScript adds this class when user scrolls down 60px */
+nav.scrolled {
+  background: rgba(4, 42, 69, 0.93);       /* dark blue, slightly transparent */
+  backdrop-filter: blur(14px);             /* frosted glass blur */
+  box-shadow: 0 2px 24px rgba(0,0,0,0.35);
+}
+
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.03em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+  list-style: none; /* removes bullet points from <ul> */
+}
+
+.nav-links a {
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  position: relative;   /* needed for the ::after underline trick */
+  padding-bottom: 3px;
+  transition: color 0.2s;
+}
+
+/* Animated underline on hover using a pseudo-element */
+.nav-links a::after {
+  content: '';           /* empty element — just for the line */
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 0;             /* starts with zero width (invisible) */
+  height: 2px;
+  background: var(--accent-gold);
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover { color: white; }
+.nav-links a:hover::after { width: 100%; } /* expands to full width on hover */
+
+/* Hamburger button (mobile only — hidden on desktop) */
+.hamburger {
+  display: none; /* hidden by default, shown in @media query */
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+}
+.hamburger span {
+  display: block;
+  width: 24px; height: 2px;
+  background: white;
+  transition: transform 0.3s, opacity 0.3s;
+}
+/* When .open class added by JS, the 3 lines animate into an X */
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Full-screen mobile menu overlay */
+.mobile-menu {
+  display: none; /* JS adds .open to show it */
+  position: fixed; inset: 0;
+  z-index: 99;
+  background: rgba(4, 42, 69, 0.97);
+  backdrop-filter: blur(12px);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  transition: color 0.2s;
+}
+.mobile-menu a:hover { color: var(--accent-gold); }
+
+
+/* ═══════════════════════════════════════════════════
+   5. HERO SECTION
+═══════════════════════════════════════════════════ */
+.hero {
+  position: relative;        /* needed so absolute children position inside it */
+  height: 100vh;             /* full viewport height */
+  min-height: 560px;
+  display: flex;
+  align-items: center;       /* vertically center content */
+  justify-content: center;   /* horizontally center content */
+  text-align: center;
+  color: white;
+  overflow: hidden;          /* clip the wave animations */
+}
+
+/* Background photo */
+.hero-bg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;          /* fill without distorting */
+  filter: brightness(0.32) saturate(1.3); /* darken & slightly boost colour */
+  transform: scale(1.08);     /* slightly zoomed out initially */
+  transition: transform 10s ease; /* zooms to scale(1) over 10 seconds */
+}
+.hero-bg.loaded { transform: scale(1); } /* JS adds this class on window load */
+
+/* Dark gradient overlay on top of photo */
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    160deg,
+    rgba(4,42,69,0.65) 0%,
+    rgba(10,61,92,0.4) 60%,
+    rgba(26,110,142,0.25) 100%
+  );
+}
+
+/* Animated wave lines container */
+.hero-waves {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.hero-waves svg {
+  position: absolute; bottom: 0;
+  width: 200%; /* wider than screen so it can scroll */
+  animation: waveSlide 18s linear infinite;
+}
+.hero-waves svg:nth-child(2) {
+  animation-duration: 24s;
+  animation-delay: -8s;
+  opacity: 0.5;
+}
+@keyframes waveSlide {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); } /* moves left by half = seamless loop */
+}
+
+/* Hero content (sits above background layers) */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 20px;
+}
+
+/* Hero title — animates in on page load */
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.4rem, 6vw, 4.8rem); /* fluid: min, preferred, max */
+  font-weight: 900;
+  line-height: 1.1;
+  text-shadow: 0 3px 28px rgba(0,0,0,0.5);
+  animation: heroTitle 1.2s ease forwards;
+  opacity: 0; /* starts invisible, animation reveals it */
+}
+@keyframes heroTitle {
+  from { opacity: 0; transform: translateY(30px) skewY(2deg); }
+  to   { opacity: 1; transform: translateY(0) skewY(0); }
+}
+
+/* Gold text pulses with a glow */
+.hero h1 span {
+  color: var(--accent-gold);
+  display: inline-block;
+  animation: goldPulse 3s ease infinite 1.5s;
+}
+@keyframes goldPulse {
+  0%,100% { text-shadow: 0 0 0 rgba(255,213,79,0); }
+  50%      { text-shadow: 0 0 30px rgba(255,213,79,0.5); }
+}
+
+/* Subtitle and tagline fade in after title */
+.hero .subtitle {
+  font-size: clamp(0.95rem, 2vw, 1.15rem);
+  color: var(--ocean-light);
+  margin-top: 14px;
+  animation: heroFade 1s ease 0.5s forwards;
+  opacity: 0;
+}
+.hero .tagline {
+  font-size: clamp(0.82rem, 1.5vw, 0.97rem);
+  color: rgba(255,255,255,0.72);
+  margin: 14px auto 0;
+  max-width: 480px;
+  line-height: 1.65;
+  animation: heroFade 1s ease 0.8s forwards;
+  opacity: 0;
+}
+@keyframes heroFade {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Buttons row */
+.hero-btns {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin-top: 36px;
+  flex-wrap: wrap;
+  animation: heroFade 1s ease 1.1s forwards;
+  opacity: 0;
+}
+
+/* Primary button (solid fill) */
+.btn-primary {
+  background: var(--ocean-light);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 13px 30px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.25s, box-shadow 0.25s, background 0.25s;
+}
+.btn-primary:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+  background: #3aa8c9;
+}
+
+/* Secondary button (outlined) */
+.btn-secondary {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+  border-radius: 30px;
+  padding: 13px 30px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.25s, background 0.25s, border-color 0.25s, color 0.25s;
+}
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.15);
+  transform: translateY(-4px) scale(1.03);
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+/* Bouncing scroll indicator */
+.scroll-indicator {
+  position: absolute;
+  bottom: 72px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  color: rgba(255,255,255,0.55);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  animation: scrollBounce 2.2s ease infinite 2s;
+}
+@keyframes scrollBounce {
+  0%,100% { transform: translateX(-50%) translateY(0); opacity: 0.6; }
+  50%      { transform: translateX(-50%) translateY(9px); opacity: 1; }
+}
+
+/* White wave at bottom of hero */
+.hero-wave-bottom {
+  position: absolute; bottom: -2px; left: 0;
+  width: 100%; z-index: 3;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   6. SHARED SECTION STYLES
+   Reusable styles applied across multiple sections
+═══════════════════════════════════════════════════ */
+section { padding: 80px 20px; }
+
+/* Centers content and limits max width */
+.container {
+  max-width: 940px;
+  margin: 0 auto; /* auto left+right = centered */
+}
+
+/* Section headings */
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.7rem, 3.5vw, 2.5rem);
+  text-align: center;
+  margin-bottom: 8px;
+  color: var(--ocean-deep);
+}
+.section-title.white { color: white; }
+.section-title.teal  { color: var(--ocean-mid); }
+
+.section-subtitle {
+  text-align: center;
+  color: var(--ocean-light);
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 28px;
+  letter-spacing: 0.02em;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   7. CRISIS SECTION
+═══════════════════════════════════════════════════ */
+.crisis { background: white; }
+
+.crisis-body {
+  font-size: 1rem;
+  line-height: 1.85;
+  color: var(--text-mid);
+  max-width: 720px;
+  margin: 0 auto 40px;
+  text-align: center;
+}
+
+/* CSS Grid: 2 equal columns with a gap */
+.crisis-images {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+/* Image container with overflow:hidden so zoom doesn't break border-radius */
+.crisis-img-wrap {
+  overflow: hidden;
+  border-radius: 18px;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.13);
+  position: relative;  /* needed for absolute label inside */
+}
+
+/* Hover label — slides up from bottom */
+.crisis-img-label {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.65));
+  color: white;
+  padding: 24px 16px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transform: translateY(100%);  /* hidden below the element */
+  transition: transform 0.35s ease;
+}
+.crisis-img-wrap:hover .crisis-img-label {
+  transform: translateY(0);     /* slides up on hover */
+}
+
+.crisis-img-wrap img {
+  width: 100%; height: 230px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s ease, filter 0.4s;
+}
+.crisis-img-wrap:hover img {
+  transform: scale(1.07);
+  filter: brightness(0.85);
+}
+
+
+/* ═══════════════════════════════════════════════════
+   8. SOLUTION SECTION
+═══════════════════════════════════════════════════ */
+.solution { background: linear-gradient(170deg, #e8f4f9 0%, #d0ecf5 100%); }
+
+.solution-intro {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 52px;
+  color: var(--text-mid);
+  line-height: 1.85;
+}
+
+/* Responsive card grid */
+.solution-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 26px;
+}
+
+.sol-card {
+  background: white;
+  border-radius: 20px;
+  padding: 38px 26px;
+  text-align: center;
+  box-shadow: 0 4px 22px rgba(10,61,92,0.08);
+  transition: transform 0.35s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.35s;
+  position: relative;
+  overflow: hidden;   /* clips the shimmer effect */
+  cursor: default;
+}
+
+/* Top colour bar — sweeps in on hover */
+.sol-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--ocean-light), var(--ocean-mid));
+  transform: scaleX(0);          /* invisible (zero width) */
+  transform-origin: left;        /* grows from left */
+  transition: transform 0.4s ease;
+}
+
+/* Light shimmer effect moving across the card */
+.sol-card::after {
+  content: '';
+  position: absolute;
+  top: -60%; left: -60%;
+  width: 40%; height: 200%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255,255,255,0.35) 50%,
+    transparent 60%
+  );
+  transform: skewX(-15deg);
+  transition: left 0.6s ease;
+}
+
+.sol-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 48px rgba(10,61,92,0.18);
+}
+.sol-card:hover::before { transform: scaleX(1); }  /* bar sweeps in */
+.sol-card:hover::after  { left: 120%; }             /* shimmer moves across */
+
+.sol-card img {
+  width: 95px; height: 95px;
+  object-fit: contain;
+  margin-bottom: 18px;
+  border-radius: 10px;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.sol-card:hover img { transform: scale(1.12) rotate(-3deg); }
+
+.sol-card h3 { font-weight: 600; font-size: 1.02rem; color: var(--ocean-deep); margin-bottom: 10px; }
+.sol-card p  { font-size: 0.86rem; color: var(--text-mid); line-height: 1.65; }
+
+
+/* ═══════════════════════════════════════════════════
+   9. BIO-CEMENTATION SECTION
+═══════════════════════════════════════════════════ */
+.bio-cement {
+  background: linear-gradient(160deg, #042a45 0%, #0d4a6e 60%, #1a6e8e 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Floating particles — JavaScript creates <div class="particle"> elements */
+.particles { position: absolute; inset: 0; pointer-events: none; }
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.15;
+  background: var(--ocean-light);
+  animation: floatUp linear infinite;
+}
+@keyframes floatUp {
+  from { transform: translateY(100vh) scale(0); opacity: 0; }
+  10%  { opacity: 0.15; }
+  90%  { opacity: 0.15; }
+  to   { transform: translateY(-100px) scale(1); opacity: 0; }
+}
+
+.bio-cement-body {
+  max-width: 720px;
+  margin: 0 auto 52px;
+  text-align: center;
+  color: rgba(255,255,255,0.83);
+  line-height: 1.85;
+  position: relative; /* sits above the particles */
+}
+
+/* Horizontal row of 3 process boxes with arrows between them */
+.process-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 52px;
+  position: relative;
+}
+
+.process-box {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  padding: 28px 18px;
+  text-align: center;
+  width: 176px;
+  transition: background 0.35s,
+              transform 0.35s cubic-bezier(0.34,1.4,0.64,1),
+              border-color 0.3s,
+              box-shadow 0.35s;
+  cursor: default;
+}
+.process-box:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-8px) scale(1.04);
+  border-color: var(--accent-gold);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+}
+.process-box img {
+  width: 72px; height: 72px;
+  object-fit: contain;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.process-box:hover img { transform: scale(1.15) rotate(5deg); }
+.process-box h4 {
+  font-size: 0.8rem; font-weight: 600;
+  color: var(--accent-gold);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.process-box p { font-size: 0.78rem; color: rgba(255,255,255,0.72); line-height: 1.5; }
+
+/* Pulsing arrows between process boxes */
+.arrow {
+  font-size: 2rem;
+  color: var(--ocean-light);
+  animation: arrowPulse 1.8s ease infinite;
+}
+@keyframes arrowPulse {
+  0%,100% { opacity: 0.5; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.2); }
+}
+
+/* Result summary box */
+.result-box {
+  background: rgba(255,255,255,0.08);
+  border-left: 4px solid var(--accent-gold);
+  border-radius: 16px;
+  padding: 28px 30px;
+  max-width: 660px;
+  margin: 0 auto;
+  display: flex;
+  gap: 22px;
+  align-items: flex-start;
+  transition: background 0.35s, transform 0.35s;
+  cursor: default;
+}
+.result-box:hover { background: rgba(255,255,255,0.15); transform: scale(1.02); }
+.result-box img {
+  width: 100px; height: auto;
+  object-fit: contain;
+  border-radius: 10px;
+  flex-shrink: 0;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.result-box:hover img { transform: rotate(6deg) scale(1.1); }
+.result-box-text h4 {
+  color: var(--accent-gold);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+}
+.result-box-text p { color: rgba(255,255,255,0.85); font-size: 0.94rem; line-height: 1.75; }
+
+
+/* ═══════════════════════════════════════════════════
+   10. BIO-SENSING SECTION
+═══════════════════════════════════════════════════ */
+.biosensing { background: #f0f7fa; }
+
+/* Bebas Neue font label with pulsing dot */
+.biosensing-label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(1.5rem, 3.5vw, 2.3rem);
+  letter-spacing: 0.12em;
+  color: var(--ocean-deep);
+  text-align: center;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Pulsing green dot before the label */
+.pulse-dot {
+  display: inline-block;
+  width: 12px; height: 12px;
+  background: var(--ocean-light);
+  border-radius: 50%;
+  animation: pulseDot 1.8s ease infinite;
+}
+@keyframes pulseDot {
+  0%,100% { box-shadow: 0 0 0 0 rgba(79,179,212,0.7); transform: scale(1); }
+  50%      { box-shadow: 0 0 0 12px rgba(79,179,212,0); transform: scale(1.15); }
+}
+
+.biosensing-intro {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 44px;
+  color: var(--text-mid);
+  line-height: 1.85;
+}
+
+/* 3-column card grid */
+.biosensing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 22px;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.bio-feat {
+  background: white;
+  border-radius: 18px;
+  padding: 32px 22px;
+  text-align: center;
+  border-top: 3px solid var(--ocean-light);
+  box-shadow: 0 2px 14px rgba(10,61,92,0.07);
+  transition: transform 0.4s cubic-bezier(0.34,1.4,0.64,1),
+              box-shadow 0.35s,
+              border-color 0.3s;
+  cursor: default;
+}
+.bio-feat:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 16px 38px rgba(10,61,92,0.15);
+  border-color: var(--ocean-deep);
+}
+.bio-feat img {
+  width: 78px; height: 78px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 16px;
+  border-radius: 8px;
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s;
+}
+.bio-feat:hover img {
+  transform: rotate(-8deg) scale(1.18);
+  filter: drop-shadow(0 4px 8px rgba(79,179,212,0.4));
+}
+
+/* Card 1: Sensor rings beeping above pentacone */
+.sensor-stack {
+  position: relative;
+  width: 100px; height: 100px;
+  margin: 0 auto 16px;
+}
+.sensor-rings-wrap {
+  position: absolute;
+  top: -10px; left: 50%;
+  transform: translateX(-50%);
+  width: 70px; height: 70px;
+  z-index: 2;
+}
+.sensor-rings-img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(79,179,212,0.8));
+  animation: sensorBeep 1.6s ease infinite;
+}
+@keyframes sensorBeep {
+  0%,100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(79,179,212,0.5)); }
+  50%      { transform: scale(1.18); filter: drop-shadow(0 0 14px rgba(79,179,212,1)); }
+}
+.pentacone-base-wrap {
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 70px; height: 60px;
+  z-index: 1;
+}
+.pentacone-base-img { width: 100%; height: 100%; object-fit: contain; }
+
+/* Card 2: Rotating bacteria SVG */
+.bacteria-pentacone-wrap {
+  width: 78px; height: 78px;
+  margin: 0 auto 14px;
+}
+/* .bac-spin class is on the SVG <g> group — rotates around the center point */
+.bac-spin {
+  animation: bacRotate 3.5s linear infinite;
+  transform-origin: 39px 47px;
+}
+@keyframes bacRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Card 3: Green pentacone using CSS filter */
+.green-pentacone-wrap {
+  width: 78px; height: 78px;
+  margin: 0 auto 16px;
+}
+.green-pentacone-img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  /* CSS filters chain to transform the brown pentacone → green */
+  /* sepia: converts to brown tones */
+  /* hue-rotate(80deg): shifts colours to green range */
+  /* saturate: boosts colour intensity */
+  filter: sepia(1) saturate(4) hue-rotate(80deg) brightness(0.85);
+  animation: greenGlow 2.4s ease infinite;
+}
+@keyframes greenGlow {
+  0%,100% { filter: sepia(1) saturate(4) hue-rotate(80deg) brightness(0.85) drop-shadow(0 0 4px rgba(76,175,80,0.4)); }
+  50%      { filter: sepia(1) saturate(5) hue-rotate(85deg) brightness(1.1)  drop-shadow(0 0 16px rgba(76,175,80,0.9)); }
+}
+
+
+/* ═══════════════════════════════════════════════════
+   11. IMPACT SECTION
+═══════════════════════════════════════════════════ */
+.impact { background: white; }
+
+.impact-intro {
+  max-width: 680px; margin: 0 auto 18px;
+  color: var(--text-mid); line-height: 1.85; text-align: center;
+}
+
+/* Orange left-border callout box */
+.impact-highlight {
+  background: #fff8e6;
+  border-left: 4px solid var(--accent-orange);
+  border-radius: 0 12px 12px 0;
+  padding: 18px 22px;
+  max-width: 680px; margin: 0 auto 30px;
+  font-weight: 500; color: var(--text-dark); line-height: 1.75;
+}
+
+.impact-list {
+  max-width: 680px; margin: 0 auto 50px; padding-left: 22px;
+}
+/* List items slide right on hover */
+.impact-list li {
+  margin-bottom: 12px; color: var(--text-mid); line-height: 1.75;
+  transition: transform 0.2s, color 0.2s; cursor: default;
+}
+.impact-list li:hover { transform: translateX(6px); color: var(--ocean-mid); }
+
+/* SDG badge grid */
+.sdg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 22px; max-width: 660px; margin: 0 auto;
+}
+.sdg-card {
+  border-radius: 18px; overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  transition: transform 0.4s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.4s;
+  display: block; text-decoration: none;
+}
+.sdg-card:hover {
+  transform: translateY(-8px) scale(1.05) rotate(1deg);
+  box-shadow: 0 18px 44px rgba(0,0,0,0.2);
+}
+.sdg-card img { width: 100%; display: block; }
+
+/* SDG 14 — fish photo with label overlay */
+.sdg-fish-wrap {
+  position: relative; background: #1565c0;
+  border-radius: 18px; overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  transition: transform 0.4s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.4s;
+  display: block; text-decoration: none;
+}
+.sdg-fish-wrap:hover {
+  transform: translateY(-8px) scale(1.05) rotate(-1deg);
+  box-shadow: 0 18px 44px rgba(0,0,0,0.2);
+}
+.sdg-fish-wrap img {
+  width: 100%; height: 182px; object-fit: cover; display: block;
+  opacity: 0.82; transition: opacity 0.3s, transform 0.4s;
+}
+.sdg-fish-wrap:hover img { opacity: 1; transform: scale(1.05); }
+.sdg-fish-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(21,101,192,0.88);
+  color: white; text-align: center;
+  padding: 10px; font-weight: 700; font-size: 0.85rem;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   12. REFERENCES SECTION
+═══════════════════════════════════════════════════ */
+.references { background: var(--ocean-deep); text-align: center; }
+.references .section-title { color: white; margin-bottom: 44px; }
+
+.ref-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  gap: 18px; max-width: 880px; margin: 0 auto;
+}
+
+.ref-item {
+  background: white; border-radius: 14px; padding: 20px 16px;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 86px; text-decoration: none;
+  position: relative; overflow: hidden;
+  transition: transform 0.35s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.35s;
+}
+
+/* Radial glow on hover using ::before */
+.ref-item::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at center, rgba(79,179,212,0.18) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+/* ↗ arrow appears on hover using ::after */
+.ref-item::after {
+  content: '↗';
+  position: absolute; top: 8px; right: 10px;
+  font-size: 0.75rem; color: var(--ocean-mid);
+  opacity: 0;
+  transform: translate(-4px, 4px);
+  transition: opacity 0.25s, transform 0.25s;
+}
+
+.ref-item:hover {
+  transform: translateY(-6px) scale(1.04);
+  box-shadow: 0 14px 36px rgba(0,0,0,0.28);
+}
+.ref-item:hover::before { opacity: 1; }
+.ref-item:hover::after  { opacity: 1; transform: translate(0,0); }
+.ref-item img { max-width: 130px; max-height: 55px; object-fit: contain; position: relative; z-index: 1; }
+
+
+/* ═══════════════════════════════════════════════════
+   13. FOOTER
+═══════════════════════════════════════════════════ */
+footer {
+  background: #021a2b;
+  color: rgba(255,255,255,0.4);
+  text-align: center;
+  padding: 26px 20px;
+  font-size: 0.82rem;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   14. RESPONSIVE — MOBILE STYLES
+   These rules ONLY apply when screen width ≤ 768px.
+   They OVERRIDE the desktop rules above.
+═══════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Hide desktop nav, show hamburger */
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+
+  /* Stack buttons vertically */
+  .hero-btns { flex-direction: column; align-items: center; }
+  .btn-primary, .btn-secondary { width: 200px; text-align: center; }
+
+  /* Crisis images: 1 column instead of 2 */
+  .crisis-images { grid-template-columns: 1fr; }
+  .crisis-img-wrap img { height: 200px; }
+
+  /* Solution cards: stack vertically */
+  .solution-cards { grid-template-columns: 1fr; }
+
+  /* Process flow: stack vertically */
+  .process-flow { flex-direction: column; align-items: center; }
+  .arrow { transform: rotate(90deg); }  /* rotate → to point down */
+
+  /* Result box: stack image above text */
+  .result-box { flex-direction: column; align-items: center; text-align: center; }
+
+  /* Bio-sensing: 1 column */
+  .biosensing-grid { grid-template-columns: 1fr; }
+
+  /* SDG: 2 columns on tablet */
+  .sdg-grid { grid-template-columns: 1fr 1fr; }
+
+  /* References: 2 columns */
+  .ref-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  section { padding: 56px 16px; }
+  .sdg-grid { grid-template-columns: 1fr; }
+}

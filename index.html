@@ -1,14 +1,502 @@
 <!DOCTYPE html>
 <html lang="en">
+<!--
+  ╔══════════════════════════════════════════════════════════╗
+  ║         LAYER 1 — HTML  (The Skeleton / Structure)       ║
+  ║  This file contains ONLY the structure of the page.      ║
+  ║  No styling, no behaviour — just the bones.              ║
+  ╚══════════════════════════════════════════════════════════╝
+
+  KEY CONCEPTS IN THIS FILE:
+  ─────────────────────────
+  • <!DOCTYPE html>   → tells browser this is modern HTML5
+  • <head>            → invisible settings (title, font imports, CSS link)
+  • <body>            → everything the user sees
+  • <nav>             → navigation bar
+  • <section>         → a meaningful page section (hero, crisis, solution...)
+  • <div>             → generic container/box for grouping
+  • <h1>–<h4>         → headings (h1=biggest, only one per page)
+  • <p>               → paragraph text
+  • <a href="">       → link (also used as styled buttons)
+  • <img src="" alt=""> → image (alt= is required for accessibility)
+  • <ul> / <li>       → unordered list / list item
+  • <button>          → clickable button (hamburger menu)
+  • <footer>          → bottom bar
+  • id="..."          → UNIQUE identifier, used for nav anchors & JS
+  • class="..."       → reusable label, used by CSS to style elements
+-->
 <head>
-     <meta charset= "UTF-8">
-     <title> iGEM Wiki Redesign</title>
-     <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ghana's Coastline is Disappearing — iGEM Ashesi</title>
+
+  <!--
+    Google Fonts — load external fonts before the page renders.
+    Playfair Display = serif headings (elegant, editorial)
+    DM Sans         = clean body text (readable, modern)
+    Bebas Neue      = bold all-caps display font (bio-sensing label)
+  -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+
+  <!-- Link to your separate CSS file (Layer 2) -->
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <h1>My Homepage</h1>
-    <p>I am building my iGEM website</p>
 
-    <script src= "script.js"></script>
+  <!-- ═══════════════════════════════════════
+       NAVIGATION BAR
+       - Fixed to top of screen (CSS does this)
+       - id="mainNav" lets JavaScript add .scrolled class on scroll
+       - .nav-logo is the brand name on the left
+       - .nav-links is the desktop menu (hidden on mobile via CSS)
+       - .hamburger is the mobile menu button (shown on mobile via CSS)
+  ═══════════════════════════════════════ -->
+  <nav id="mainNav">
+    <a href="#hero" class="nav-logo">iGEM · Ashesi · Ghana</a>
+    <ul class="nav-links">
+      <li><a href="#crisis">The Crisis</a></li>
+      <li><a href="#solution">Solution</a></li>
+      <li><a href="#biocement">Bio-Cement</a></li>
+      <li><a href="#biosensing">Bio-Sensing</a></li>
+      <li><a href="#impact">Impact</a></li>
+      <li><a href="#references">References</a></li>
+    </ul>
+    <!--
+      The hamburger button — 3 <span> tags become 3 lines via CSS.
+      JavaScript toggles class="open" which CSS uses to animate into an X.
+    -->
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile full-screen overlay menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#crisis"     onclick="closeMobile()">The Crisis</a>
+    <a href="#solution"   onclick="closeMobile()">Solution</a>
+    <a href="#biocement"  onclick="closeMobile()">Bio-Cement</a>
+    <a href="#biosensing" onclick="closeMobile()">Bio-Sensing</a>
+    <a href="#impact"     onclick="closeMobile()">Impact</a>
+    <a href="#references" onclick="closeMobile()">References</a>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       SECTION 1: HERO
+       - Full screen opening section
+       - id="hero" matches the nav link href="#hero"
+       - .hero-bg is the background image (positioned absolute via CSS)
+       - .hero-overlay is a dark colour layer on top of the image
+       - .hero-waves contains animated SVG wave shapes
+       - .hero-content holds the visible text and buttons
+       - .scroll-indicator is the bouncing arrow at bottom
+       - .hero-wave-bottom is the white wave that transitions to next section
+  ═══════════════════════════════════════ -->
+  <section class="hero" id="hero">
+
+    <!-- Background photo — CSS makes this fill the entire section -->
+    <img class="hero-bg" id="heroBg" src="images/ghana_coast.jpg" alt="Ghana coastline aerial view"/>
+
+    <!-- Semi-transparent colour overlay to darken the photo -->
+    <div class="hero-overlay"></div>
+
+    <!-- Animated wave lines (decorative SVG) -->
+    <div class="hero-waves">
+      <svg viewBox="0 0 2880 80" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 C1680,80 1920,0 2160,40 C2400,80 2640,0 2880,40 L2880,80 L0,80 Z"
+              fill="rgba(255,255,255,0.04)"/>
+      </svg>
+      <svg viewBox="0 0 2880 80" xmlns="http://www.w3.org/2000/svg" style="bottom:20px;">
+        <path d="M0,50 C360,10 720,70 1080,50 C1440,30 1800,70 2160,50 C2520,30 2700,60 2880,50 L2880,80 L0,80 Z"
+              fill="rgba(79,179,212,0.07)"/>
+      </svg>
+    </div>
+
+    <!-- Main visible content -->
+    <div class="hero-content">
+      <h1>Ghana's Coastline is<br/><span>Disappearing</span></h1>
+      <p class="subtitle">But We Can Rebuild It With Living Technology</p>
+      <p class="tagline">A bioengineered solution to erosion, pollution, and ocean health monitoring</p>
+
+      <!-- CTA Buttons — <a> tags styled to look like buttons -->
+      <div class="hero-btns">
+        <a href="#crisis"   class="btn-primary">Explore the Crisis</a>
+        <a href="#solution" class="btn-secondary">See Our Solution</a>
+      </div>
+    </div>
+
+    <!-- Bouncing scroll indicator -->
+    <div class="scroll-indicator">
+      <span>SCROLL</span>
+      <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
+        <path d="M2 2l8 9 8-9" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <!-- White wave shape at the bottom edge -->
+    <div class="hero-wave-bottom">
+      <svg viewBox="0 0 1440 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 64 Q360 0 720 44 Q1080 88 1440 24 L1440 64 Z" fill="#ffffff"/>
+      </svg>
+    </div>
+
+  </section><!-- end #hero -->
+
+
+  <!-- ═══════════════════════════════════════
+       SECTION 2: CRISIS
+       - White background section
+       - Two photos side by side (CSS grid makes them responsive)
+       - .anim-slide-left / .anim-slide-right = scroll animation classes
+         (start invisible, JavaScript adds .visible when they enter the screen)
+  ═══════════════════════════════════════ -->
+  <section class="crisis" id="crisis">
+    <div class="container">
+
+      <h2 class="section-title anim-blur-in">The Crisis Facing Ghana's Coastline</h2>
+      <p class="section-subtitle anim-fade-up d1">A Growing Environmental Emergency</p>
+
+      <p class="crisis-body anim-fade-up d2">
+        Ghana's coastline is rapidly eroding due to rising sea levels, pollution,
+        and unsustainable human activity. Communities, wildlife, and marine ecosystems
+        are well affected. Without intervention, key areas critical for local economies
+        and biodiversity could be lost.
+      </p>
+
+      <!-- Two images side by side — CSS grid handles layout -->
+      <div class="crisis-images">
+        <div class="crisis-img-wrap anim-slide-left">
+          <img src="images/ghana_coast.jpg" alt="Ghana coastline aerial view"/>
+          <!-- Label that slides up on hover (CSS does the animation) -->
+          <div class="crisis-img-label">🛰️ Aerial view of Ghana's endangered coastline</div>
+        </div>
+        <div class="crisis-img-wrap anim-slide-right">
+          <img src="images/pollution.jpg" alt="Coastal plastic pollution"/>
+          <div class="crisis-img-label">🗑️ Plastic waste threatening marine ecosystems</div>
+        </div>
+      </div>
+
+    </div>
+  </section><!-- end #crisis -->
+
+
+  <!-- ═══════════════════════════════════════
+       SECTION 3: OUR SOLUTION
+       - Light blue gradient background
+       - Three cards in a responsive grid
+       - Each card: icon image + title + description
+  ═══════════════════════════════════════ -->
+  <section class="solution" id="solution">
+    <div class="container">
+
+      <h2 class="section-title teal anim-blur-in">Our Solution</h2>
+      <p class="section-subtitle anim-fade-up d1">Rebuilding Coastlines with Living, Bioengineered Systems</p>
+
+      <p class="solution-intro anim-fade-up d2">
+        Our project uses engineered biological systems to stabilize coastlines, reduce
+        pollution, and monitor ocean health in real time. By combining synthetic biology
+        with environmental engineering, we create a sustainable and adaptive solution.
+      </p>
+
+      <!--
+        .solution-cards = the grid container
+        Each .sol-card = one card in the grid
+        d1, d2, d3 = delay classes (CSS transition-delay staggers their appearance)
+      -->
+      <div class="solution-cards">
+
+        <div class="sol-card anim-scale-in d1">
+          <img src="images/dna.jpg" alt="DNA double helix — Bioengineering"/>
+          <h3>Bioengineering / DNA</h3>
+          <p>Living materials that strengthen and protect coastlines through engineered microorganisms.</p>
+        </div>
+
+        <div class="sol-card anim-scale-in d3">
+          <img src="images/sensor.jpg" alt="Concentric rings — Real-time monitoring sensor"/>
+          <h3>Real-Time Monitoring</h3>
+          <p>Sensors track ocean health and environmental changes, providing live data on ocean conditions.</p>
+        </div>
+
+        <div class="sol-card anim-scale-in d5">
+          <img src="images/recycle.jpg" alt="Recycle symbol — Sustainable design"/>
+          <h3>Sustainable Design</h3>
+          <p>Eco-friendly systems that adapt and regenerate naturally alongside the environment.</p>
+        </div>
+
+      </div>
+    </div>
+  </section><!-- end #solution -->
+
+
+  <!-- ═══════════════════════════════════════
+       SECTION 4: BIO-CEMENTATION
+       - Dark ocean blue background
+       - .particles div = JavaScript fills this with floating dots
+       - Process flow: 3 boxes connected by + and → arrows
+       - Result box at the bottom summarises the output
+  ═══════════════════════════════════════ -->
+  <section class="bio-cement" id="biocement">
+
+    <!-- Empty div — JavaScript generates floating particle elements inside this -->
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+
+      <h2 class="section-title white anim-blur-in">From Microbes to Coastal Protection</h2>
+
+      <p class="bio-cement-body anim-fade-up d1">
+        We used a process called bio-cementation. Bio-cementation uses engineered microbes
+        and chemicals (Sodium bicarbonate and calcium chloride) to form a binding solution
+        which is then added to sand to form a mixture solidified to form a sea defense structure.
+      </p>
+
+      <!-- Process flow — 3 boxes with arrows between them -->
+      <div class="process-flow">
+
+        <div class="process-box anim-flip d1">
+          <img src="images/flask.jpg" alt="Flask with yellow liquid — binding solution"/>
+          <h4>Liquid Mixture</h4>
+          <p>Binding solution: NaHCO₃, Gelatin, CaCl₂ &amp; Vibrio in hydrogel</p>
+        </div>
+
+        <!-- + symbol between boxes -->
+        <div class="arrow anim-fade-up d2">+</div>
+
+        <div class="process-box anim-flip d3">
+          <img src="images/sand.jpg" alt="Sand pile"/>
+          <h4>Sand</h4>
+          <p>Natural sand base forming the structural foundation</p>
+        </div>
+
+        <!-- → arrow -->
+        <div class="arrow anim-fade-up d4">→</div>
+
+        <div class="process-box anim-flip d5">
+          <img src="images/generated-svg.jpg" alt="Sandy paste bio-cement mixture"/>
+          <h4>Bio-Cement Mixture</h4>
+          <p>Solidified pentacone defense wall structure</p>
+        </div>
+
+      </div><!-- end .process-flow -->
+
+      <!-- Result summary box -->
+      <div class="result-box anim-scale-in">
+        <img src="images/pentacone.jpg" alt="Pentacone sea defense wall"/>
+        <div class="result-box-text">
+          <h4>Bio-Cement Mixture Result</h4>
+          <p>
+            The bio-cement mixture (sand + binding solution) are placed in a pentacone shaped
+            container and allowed to dry and solidify to form the bio-sea defense wall (pentacone)
+            to prevent erosion, plastic pollution and enhance sustainability.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section><!-- end #biocement -->
+
+
+  <!-- ═══════════════════════════════════════
+       SECTION 5: BIO-SENSING
+       - Light blue/grey background
+       - .biosensing-label uses Bebas Neue font with a pulsing dot
+       - Three feature cards, each with a unique image:
+         Card 1: Sensor rings beeping on top of pentacone (inline SVG animation)
+         Card 2: Bacteria rotating inside pentacone (inline SVG + CSS animation)
+         Card 3: Green-glowing pentacone (CSS filter animation)
+  ═══════════════════════════════════════ -->
+  <section class="biosensing" id="biosensing">
+    <div class="container">
+
+      <div class="biosensing-label anim-blur-in">
+        <!-- Pulsing dot — CSS animation makes it pulse -->
+        <span class="pulse-dot"></span>
+        Bio-Sensing Features of Our Project
+      </div>
+
+      <p class="biosensing-intro anim-fade-up d1">
+        Embedded within each Pentacone is a layer of biosensing bacteria. These engineered
+        microbes detect environmental signals such as pollutants, pH, salinity — allowing
+        us to monitor ocean health in real time. It is sensitive to color change based on
+        the presence of some metal ions in the sea water.
+      </p>
+
+      <div class="biosensing-grid">
+
+        <!-- Card 1: Sensor rings beeping on pentacone -->
+        <div class="bio-feat anim-rotate-in d1">
+          <div class="sensor-stack">
+            <div class="sensor-rings-wrap">
+              <img src="images/sensor.jpg" alt="Concentric sensor rings" class="sensor-rings-img"/>
+            </div>
+            <div class="pentacone-base-wrap">
+              <img src="images/pentacone.jpg" alt="Pentacone base" class="pentacone-base-img"/>
+            </div>
+          </div>
+          <h4>Sensor Detecting Environmental Changes</h4>
+          <p>Real-time detection of pollutants and toxins in the surrounding ocean environment.</p>
+        </div>
+
+        <!-- Card 2: Bacteria rotating inside pentacone (inline SVG) -->
+        <div class="bio-feat anim-rotate-in d3">
+          <div class="bacteria-pentacone-wrap">
+            <!--
+              This SVG is drawn directly in the HTML (inline SVG).
+              The pentacone is a static <image> tag inside the SVG.
+              The bacteria group has class="bac-spin" which CSS animates.
+              Only the bacteria group rotates — the pentacone stays still.
+            -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 78 78" width="78" height="78">
+              <image href="images/pentacone.jpg" x="2" y="6" width="74" height="66"/>
+              <ellipse cx="39" cy="48" rx="21" ry="15" fill="rgba(42,157,143,0.22)"/>
+              <g class="bac-spin">
+                <ellipse cx="39" cy="47" rx="9" ry="5.5" fill="#2a9d8f" opacity="0.95"/>
+                <circle cx="36" cy="46" r="1.8" fill="rgba(255,255,255,0.55)"/>
+                <circle cx="41" cy="48" r="1.3" fill="rgba(255,255,255,0.4)"/>
+                <line x1="39" y1="41" x2="39" y2="38" stroke="#1a7a6e" stroke-width="1.3"/>
+                <path d="M30 47 Q25 42 23 46 Q21 50 19 46" stroke="#1a7a6e" stroke-width="1.4" fill="none"/>
+                <path d="M48 47 Q53 42 55 46 Q57 50 59 46" stroke="#1a7a6e" stroke-width="1.4" fill="none"/>
+              </g>
+            </svg>
+          </div>
+          <h4>Living Bacteria in Hydrogel</h4>
+          <p>Engineered bacteria embedded within hydrogel provide long-lasting biosensing capability.</p>
+        </div>
+
+        <!-- Card 3: Green pentacone -->
+        <div class="bio-feat anim-rotate-in d5">
+          <div class="green-pentacone-wrap">
+            <img src="images/pentacone.jpg" alt="Green pentacone — color change response"
+                 class="green-pentacone-img"/>
+          </div>
+          <h4>Block Activation via Color Changes</h4>
+          <p>Visual color-change response signals the presence of specific metal ions and contaminants.</p>
+        </div>
+
+      </div><!-- end .biosensing-grid -->
+    </div>
+  </section><!-- end #biosensing -->
+
+
+  <!-- ═══════════════════════════════════════
+       SECTION 6: IMPACT
+       - White background
+       - Bulleted list + 3 SDG badge images
+       - Each SDG image is wrapped in <a> linking to the UN SDG page
+  ═══════════════════════════════════════ -->
+  <section class="impact" id="impact">
+    <div class="container">
+
+      <h2 class="section-title anim-blur-in">Our Impact</h2>
+      <p class="section-subtitle anim-fade-up d1">Aligned with Global Sustainability Goals</p>
+
+      <p class="impact-intro anim-fade-up d2">
+        The bio-cementation process reduces reliance on concrete; the calcium carbonate
+        formation makes the Pentacone durable and strong, hence reducing wave energy
+        and preventing erosion.
+      </p>
+
+      <div class="impact-highlight anim-slide-left">
+        Our project's success and long-term impact depend on how well it resonates
+        with the people it aims to serve by improving:
+      </div>
+
+      <ul class="impact-list anim-fade-up">
+        <li>🏙️ Sustainable Cities and Communities (SDG 11)</li>
+        <li>🌊 Life Below Water (SDG 14)</li>
+        <li>💚 Good Health and Well-being (SDG 3)</li>
+      </ul>
+
+      <!-- SDG badge images — each wrapped in a link to the UN SDG website -->
+      <div class="sdg-grid">
+
+        <a href="https://sdgs.un.org/goals/goal11" target="_blank" rel="noopener"
+           class="sdg-card anim-scale-in d1">
+          <img src="images/sdg11.jpg" alt="SDG 11 – Sustainable Cities and Communities"/>
+        </a>
+
+        <a href="https://sdgs.un.org/goals/goal14" target="_blank" rel="noopener"
+           class="sdg-fish-wrap anim-scale-in d3">
+          <img src="images/fish.jpg" alt="SDG 14 – Life Below Water"/>
+          <div class="sdg-fish-label">SDG 14 · Life Below Water</div>
+        </a>
+
+        <a href="https://sdgs.un.org/goals/goal3" target="_blank" rel="noopener"
+           class="sdg-card anim-scale-in d5">
+          <img src="images/sdg3.jpg" alt="SDG 3 – Good Health and Well-being"/>
+        </a>
+
+      </div>
+    </div>
+  </section><!-- end #impact -->
+
+
+  <!-- ═══════════════════════════════════════
+       SECTION 7: REFERENCES
+       - Dark ocean blue background
+       - Grid of logo images, each wrapped in <a> with external link
+       - rel="noopener" is a security best practice for target="_blank" links
+  ═══════════════════════════════════════ -->
+  <section class="references" id="references">
+    <div class="container">
+
+      <h2 class="section-title anim-blur-in">References</h2>
+
+      <div class="ref-grid">
+
+        <a href="https://courier.unesco.org/en/articles/ghanas-coastline-swallowed-sea"
+           target="_blank" rel="noopener" class="ref-item anim-fade-up d1" title="UNESCO">
+          <img src="images/unesco.jpg" alt="UNESCO"/>
+        </a>
+
+        <a href="https://docs.digitalearthafrica.org/en/latest/data_specs/Coastlines_specs.html"
+           target="_blank" rel="noopener" class="ref-item anim-fade-up d2" title="Digital Earth Africa">
+          <img src="images/digital_earth.jpg" alt="Digital Earth Africa"/>
+        </a>
+
+        <a href="https://projects.worldbank.org/en/projects-operations/project-detail/P175525"
+           target="_blank" rel="noopener" class="ref-item anim-fade-up d3" title="World Bank Group">
+          <img src="images/worldbank.jpg" alt="World Bank Group"/>
+        </a>
+
+        <a href="https://ghanacic.ashesi.edu.gh/wp-content/uploads/2024/12/Report_Economic-Potential-of-PWCM-in-Ghana.pdf"
+           target="_blank" rel="noopener" class="ref-item anim-fade-up d4" title="Ashesi University">
+          <img src="images/ashesi.jpg" alt="Ashesi University"/>
+        </a>
+
+        <a href="https://environment360gh.org/empowering-plastic-waste-pickers-a-pathway-to-achieving-nationally-determined-goals/"
+           target="_blank" rel="noopener" class="ref-item anim-fade-up d5" title="Environment360">
+          <img src="images/environment360.jpg" alt="Environment360"/>
+        </a>
+
+        <a href="https://www.weforum.org/impact/data-benefits-ghana-fight-against-plastic-pollution/"
+           target="_blank" rel="noopener" class="ref-item anim-fade-up d6" title="World Economic Forum">
+          <img src="images/wef.jpg" alt="World Economic Forum"/>
+        </a>
+
+        <a href="https://www.miniplast.com/"
+           target="_blank" rel="noopener" class="ref-item anim-fade-up d7" title="miniPLAST">
+          <img src="images/miniplast.jpg" alt="miniPLAST"/>
+        </a>
+
+      </div>
+    </div>
+  </section><!-- end #references -->
+
+
+  <!-- ═══════════════════════════════════════
+       FOOTER
+       - Simple dark bar with copyright
+  ═══════════════════════════════════════ -->
+  <footer>
+    <p>iGEM Wiki Project — Ghana Coastline Bioengineering Initiative &copy; 2026</p>
+  </footer>
+
+
+  <!-- Link to your separate JS file (Layer 3) -->
+  <script src="script.js"></script>
+
 </body>
 </html>
