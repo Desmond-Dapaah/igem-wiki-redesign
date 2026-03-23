@@ -15,5 +15,6 @@ This project is a redesign of the iGEM Wiki homepage, built using HTML, CSS, and
 
 ## Design Reference
 The original Canva design for the Hero Section can be found here:
+https://kwasiappiah.my.canva.site/igem-wiki-project-dapaahdesmond
 
 `design_canva/Ghana's Coastline is Disappearing.png`
